@@ -81,7 +81,35 @@
     gap: 16px;
   }
 
-  .logo { display: block; height: 44px; width: auto; }
+  /* Auf schmalen Handys wird das Logo kleiner, damit Sprachschalter und QR-Knopf daneben passen. */
+  .logo-link { flex: 0 1 auto; min-width: 0; }
+  .logo { display: block; width: clamp(140px, calc(100vw - 208px), 200px); height: auto; }
+
+  .leiste-rechts { display: flex; align-items: center; gap: 10px; flex: none; }
+
+  .sprachen {
+    display: inline-flex;
+    padding: 3px;
+    border: 1.5px solid rgba(255, 255, 255, 0.6);
+    border-radius: 999px;
+  }
+  .sprachen button {
+    min-width: 40px;
+    height: 36px;
+    padding: 0 10px;
+    border: 0;
+    border-radius: 999px;
+    background: transparent;
+    color: #fff;
+    font: inherit;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    cursor: pointer;
+    transition: background-color 0.2s var(--weich), color 0.2s var(--weich);
+  }
+  .sprachen button[aria-pressed="true"] { background: #fff; color: var(--puls); }
+  .sprachen button[aria-pressed="false"]:hover { background: rgba(255, 255, 255, 0.14); }
 
   .qr-knopf {
     display: inline-grid;
@@ -326,7 +354,7 @@
       padding: 48px var(--rand) 56px;
     }
 
-    .logo { height: 56px; }
+    .logo { width: 254px; }
     .qr-knopf { display: none; }
     .person { margin-top: 0; }
     .portraet { width: 128px; height: 128px; font-size: 2.75rem; }
@@ -395,10 +423,16 @@
 <main class="karte" data-zustand="laedt">
   <header class="kopf">
     <div class="leiste">
-      <a href="https://www.herzkoenig.com" aria-label="Zur Website von HERZKönig Medizintechnik GmbH"><img class="logo" src="assets/logo-weiss.svg" width="200" height="44" alt="HERZKönig Medizintechnik GmbH"></a>
-      <button class="qr-knopf" type="button" data-qr-oeffnen data-nur-offen aria-label="QR-Code dieser Karte zeigen">
-        <svg width="22" height="22" aria-hidden="true"><use href="#i-qr"/></svg>
-      </button>
+      <a class="logo-link" href="https://www.herzkoenig.com" data-t-aria="zur_website" aria-label="Zur Website"><img class="logo" src="assets/logo-weiss.svg" width="200" height="44" alt="HERZKönig Medizintechnik GmbH"></a>
+      <div class="leiste-rechts">
+        <div class="sprachen" role="group" data-t-aria="sprache" aria-label="Sprache">
+          <button type="button" data-sprache="de" aria-pressed="true" lang="de">DE</button>
+          <button type="button" data-sprache="en" aria-pressed="false" lang="en">EN</button>
+        </div>
+        <button class="qr-knopf" type="button" data-qr-oeffnen data-nur-offen data-t-aria="qr_zeigen" aria-label="QR-Code dieser Karte zeigen">
+          <svg width="22" height="22" aria-hidden="true"><use href="#i-qr"/></svg>
+        </button>
+      </div>
     </div>
 
     <div class="person" data-nur-offen>
@@ -407,49 +441,49 @@
       <p class="titel" data-titel></p>
       <a class="speichern" href="#" data-speichern>
         <svg width="22" height="22" aria-hidden="true"><use href="#i-kontakt"/></svg>
-        Kontakt speichern
+        <span data-t="speichern">Kontakt speichern</span>
       </a>
     </div>
 
     <div class="hinweis" data-nur-gesperrt>
-      <h1>Digitale Visitenkarte</h1>
-      <p data-hinweis-text>Diese Karte öffnet sich über ihren QR-Code.</p>
+      <h1 data-t="visitenkarte">Digitale Visitenkarte</h1>
+      <p data-hinweis-text data-t="hinweis_ohne">Diese Karte öffnet sich über ihren QR-Code.</p>
     </div>
 
     <svg class="herz" viewBox="0 0 100 89" aria-hidden="true" focusable="false"><path d="m89.04,7.99l-.7-.7s-16.4-16.4-32.8,0l-5.5,5.5-4.7-4.7s-17.2-17.2-34.5,0l-3.2,3.2s-17.2,17.2,0,34.5l42.6,42.4,37.7-37.7,5.5-5.5s16.4-16.4,0-32.8l-1-1-8.1,8.1c3.9,4.8,4.9,10.4.3,15l-7.8,7.9-3.7-3.7-6.3,6.3c-.4.4-1,.7-1.6.7s-1.2-.2-1.6-.7c-.9-.9-.9-2.3,0-3.2l6.3-6.3-4.8-4.7-6.3,6.3c-.4.4-1,.7-1.6.7s-1.2-.2-1.6-.7c-.9-.9-.9-2.3,0-3.2l6.3-6.3-3.7-3.7,7.8-7.9c4.6-4.6,10.2-3.6,15,.3l8-8.1Z"/></svg>
   </header>
 
-  <section class="inhalt" aria-label="Kontaktwege">
+  <section class="inhalt" data-t-aria="kontaktwege" aria-label="Kontaktwege">
     <ul class="kontakte" data-kontakte data-nur-offen></ul>
 
     <div class="qr-feld" data-nur-offen>
-      <div class="qr-bild" data-qr role="img" aria-label="QR-Code zu dieser Karte"></div>
+      <div class="qr-bild" data-qr role="img" data-t-aria="qr_bild" aria-label="QR-Code zu dieser Karte"></div>
       <div>
-        <strong>Auf dem Handy öffnen</strong>
-        <p>Code scannen, dann den Kontakt mit einem Tipp speichern.</p>
+        <strong data-t="auf_handy">Auf dem Handy öffnen</strong>
+        <p data-t="auf_handy_text">Code scannen, dann den Kontakt mit einem Tipp speichern.</p>
       </div>
     </div>
 
     <p class="firma"><strong>HERZKönig Medizintechnik GmbH</strong></p>
 
-    <nav class="fuss" aria-label="Rechtliches">
-      <a href="https://www.herzkoenig.com/impressum">Impressum</a>
-      <a href="https://www.herzkoenig.com/datenschutzerklaerung">Datenschutz</a>
+    <nav class="fuss" data-t-aria="rechtliches" aria-label="Rechtliches">
+      <a href="https://www.herzkoenig.com/impressum" data-t="impressum">Impressum</a>
+      <a href="https://www.herzkoenig.com/datenschutzerklaerung" data-t="datenschutz">Datenschutz</a>
     </nav>
   </section>
 </main>
 
-<dialog class="qr-blatt" id="qr-blatt" aria-label="QR-Code dieser Karte">
-  <button class="schliessen" type="button" data-qr-schliessen aria-label="Schließen">
+<dialog class="qr-blatt" id="qr-blatt" data-t-aria="qr_blatt" aria-label="QR-Code dieser Karte">
+  <button class="schliessen" type="button" data-qr-schliessen data-t-aria="schliessen" aria-label="Schließen">
     <svg width="22" height="22" aria-hidden="true"><use href="#i-zu"/></svg>
   </button>
   <div class="qr-mitte">
-    <div class="qr-bild" data-qr role="img" aria-label="QR-Code zu dieser Karte"></div>
+    <div class="qr-bild" data-qr role="img" data-t-aria="qr_bild" aria-label="QR-Code zu dieser Karte"></div>
     <p class="qr-name" data-qr-name></p>
-    <p class="qr-hinweis">Scannen öffnet diese Karte.</p>
+    <p class="qr-hinweis" data-t="scannen">Scannen öffnet diese Karte.</p>
     <button class="teilen" type="button" data-teilen>
       <svg width="20" height="20" aria-hidden="true"><use href="#i-teilen"/></svg>
-      <span data-teilen-text>Link teilen</span>
+      <span data-teilen-text data-t="teilen">Link teilen</span>
     </button>
     <p class="meldung" data-meldung aria-live="polite"></p>
   </div>
@@ -462,30 +496,123 @@
     var PRAEFIX_DATEI = "hk-visitenkarte/datei/";
     var PRAEFIX_SCHLUESSEL = "hk-visitenkarte/schluessel/";
 
+    // Alle festen Texte der Seite je Sprache. Schlüssel stehen im HTML als data-t (Text)
+    // und data-t-aria (Vorlesetext); die Etiketten der Kontaktwege setzt bauen.py mit data-t.
+    var TEXTE = {
+      de: {
+        seitentitel: "Digitale Visitenkarte · HERZKönig Medizintechnik GmbH",
+        visitenkarte: "Digitale Visitenkarte",
+        hinweis_ohne: "Diese Karte öffnet sich über ihren QR-Code.",
+        hinweis_browser: "Dieser Browser kann die Karte nicht öffnen. Bitte mit einem aktuellen Browser erneut scannen.",
+        hinweis_netz: "Die Karte ließ sich gerade nicht laden. Bitte später erneut versuchen.",
+        hinweis_unbekannt: "Dieser Link ist unvollständig oder die Karte gibt es nicht mehr. Bitte den QR-Code erneut scannen.",
+        speichern: "Kontakt speichern",
+        mobil: "Mobil", telefon: "Telefon", email: "E-Mail", linkedin: "LinkedIn", website: "Website", adresse: "Adresse",
+        auf_handy: "Auf dem Handy öffnen",
+        auf_handy_text: "Code scannen, dann den Kontakt mit einem Tipp speichern.",
+        impressum: "Impressum", datenschutz: "Datenschutz",
+        scannen: "Scannen öffnet diese Karte.",
+        teilen: "Link teilen", kopieren: "Link kopieren", kopiert: "Link kopiert.",
+        nicht_kopiert: "Kopieren nicht möglich. Link: ", nicht_geteilt: "Teilen hat nicht geklappt. Link: ", link: "Link: ",
+        portraet: "Porträt von ",
+        zur_website: "Zur Website", sprache: "Sprache", qr_zeigen: "QR-Code dieser Karte zeigen",
+        kontaktwege: "Kontaktwege", qr_bild: "QR-Code zu dieser Karte", rechtliches: "Rechtliches",
+        qr_blatt: "QR-Code dieser Karte", schliessen: "Schließen"
+      },
+      en: {
+        seitentitel: "Digital business card · HERZKönig Medizintechnik GmbH",
+        visitenkarte: "Digital business card",
+        hinweis_ohne: "This card opens via its QR code.",
+        hinweis_browser: "This browser cannot open the card. Please scan again with an up-to-date browser.",
+        hinweis_netz: "The card could not be loaded right now. Please try again later.",
+        hinweis_unbekannt: "This link is incomplete or the card no longer exists. Please scan the QR code again.",
+        speichern: "Save contact",
+        mobil: "Mobile", telefon: "Phone", email: "Email", linkedin: "LinkedIn", website: "Website", adresse: "Address",
+        auf_handy: "Open on your phone",
+        auf_handy_text: "Scan the code, then save the contact with one tap.",
+        impressum: "Legal notice", datenschutz: "Privacy policy",
+        scannen: "Scan to open this card.",
+        teilen: "Share link", kopieren: "Copy link", kopiert: "Link copied.",
+        nicht_kopiert: "Copying failed. Link: ", nicht_geteilt: "Sharing failed. Link: ", link: "Link: ",
+        portraet: "Portrait of ",
+        zur_website: "Go to website", sprache: "Language", qr_zeigen: "Show this card's QR code",
+        kontaktwege: "Contact details", qr_bild: "QR code for this card", rechtliches: "Legal",
+        qr_blatt: "QR code of this card", schliessen: "Close"
+      }
+    };
+
     var karte = document.querySelector(".karte");
     var hinweis = document.querySelector("[data-hinweis-text]");
     var blatt = document.getElementById("qr-blatt");
     var oeffnen = document.querySelector("[data-qr-oeffnen]");
     var meldung = document.querySelector("[data-meldung]");
     var teilen = document.querySelector("[data-teilen]");
+    var teilenText = document.querySelector("[data-teilen-text]");
     var speichern = document.querySelector("[data-speichern]");
+    var aktuell = null; // entschlüsselte Karte, sobald geladen
 
-    function sperren(text) {
-      if (text) hinweis.textContent = text;
-      karte.dataset.zustand = "gesperrt";
+    // Speicher kann fehlen (privates Surfen); dann geht es ohne Merken weiter.
+    function lesen(name) {
+      try { return localStorage.getItem(name) || ""; } catch (fehler) { return ""; }
+    }
+    function schreiben(name, wert) {
+      try { localStorage.setItem(name, wert); } catch (fehler) { /* ohne Speicher weiter */ }
+    }
+    function loeschen(name) {
+      try { localStorage.removeItem(name); } catch (fehler) { /* ohne Speicher weiter */ }
     }
 
     // Merkt sich die zuletzt geöffnete Karte, falls ein Home-Bildschirm-Symbol ohne # startet.
-    // Speicher kann fehlen (privates Surfen); dann geht es ohne Merken weiter.
     var SPEICHER = "hk-visitenkarte";
-    function gemerkt() {
-      try { return localStorage.getItem(SPEICHER) || ""; } catch (fehler) { return ""; }
+    var SPEICHER_SPRACHE = "hk-visitenkarte-sprache";
+
+    // Gewählte Sprache, sonst die des Handys: Deutsch bei deutschem Gerät, sonst Englisch.
+    var sprache = lesen(SPEICHER_SPRACHE);
+    if (!TEXTE[sprache]) sprache = /^de\b/i.test(navigator.language || "") ? "de" : "en";
+
+    function t(schluessel) {
+      return TEXTE[sprache][schluessel];
     }
-    function merken(geheim) {
-      try { localStorage.setItem(SPEICHER, geheim); } catch (fehler) { /* ohne Speicher weiter */ }
+
+    function sprachabhaengig() {
+      if (!aktuell) {
+        document.title = t("seitentitel");
+        return;
+      }
+      document.title = aktuell.seitentitel[sprache];
+      document.querySelector("[data-titel]").textContent = aktuell.titel[sprache];
+      var bild = document.querySelector(".portraet img");
+      if (bild) bild.alt = t("portraet") + aktuell.name;
+      // Die Kontaktdatei entsteht erst hier im Browser; auf dem Server liegt sie nur verschlüsselt.
+      if (speichern.href.indexOf("blob:") === 0) URL.revokeObjectURL(speichern.href);
+      speichern.href = URL.createObjectURL(new Blob([aktuell.vcf[sprache]], { type: "text/vcard;charset=utf-8" }));
+      speichern.download = aktuell.vcf_name;
     }
-    function vergessen() {
-      try { localStorage.removeItem(SPEICHER); } catch (fehler) { /* ohne Speicher weiter */ }
+
+    function anwenden() {
+      document.documentElement.lang = sprache;
+      document.querySelectorAll("[data-t]").forEach(function (ort) { ort.textContent = t(ort.dataset.t); });
+      document.querySelectorAll("[data-t-aria]").forEach(function (ort) { ort.setAttribute("aria-label", t(ort.dataset.tAria)); });
+      document.querySelectorAll("[data-sprache]").forEach(function (knopf) {
+        knopf.setAttribute("aria-pressed", String(knopf.dataset.sprache === sprache));
+      });
+      teilenText.textContent = navigator.share ? t("teilen") : t("kopieren");
+      meldung.textContent = "";
+      sprachabhaengig();
+    }
+
+    document.querySelectorAll("[data-sprache]").forEach(function (knopf) {
+      knopf.addEventListener("click", function () {
+        sprache = knopf.dataset.sprache;
+        schreiben(SPEICHER_SPRACHE, sprache);
+        anwenden();
+      });
+    });
+
+    function sperren(schluessel) {
+      hinweis.dataset.t = schluessel;
+      hinweis.textContent = t(schluessel);
+      karte.dataset.zustand = "gesperrt";
     }
 
     function sha256(text) {
@@ -499,35 +626,31 @@
     }
 
     function zeigen(daten) {
-      document.title = daten.seitentitel;
+      aktuell = daten;
       document.querySelector('meta[name="apple-mobile-web-app-title"]').setAttribute("content", daten.name);
       // Die HTML-Teile stammen aus bauen.py (dort escaped) und sind durch AES-GCM gegen Änderung geschützt.
       document.querySelector("[data-portraet]").innerHTML = daten.portraet;
       document.querySelector("[data-name]").textContent = daten.name;
-      document.querySelector("[data-titel]").textContent = daten.titel;
       document.querySelector("[data-kontakte]").innerHTML = daten.kontakte;
       document.querySelector("[data-qr-name]").textContent = daten.name;
       document.querySelectorAll("[data-qr]").forEach(function (ort) { ort.innerHTML = daten.qr; });
-      // Die Kontaktdatei entsteht erst hier im Browser; auf dem Server liegt sie nur verschlüsselt.
-      if (speichern.href.indexOf("blob:") === 0) URL.revokeObjectURL(speichern.href);
-      speichern.href = URL.createObjectURL(new Blob([daten.vcf], { type: "text/vcard;charset=utf-8" }));
-      speichern.download = daten.vcf_name;
+      anwenden();
       karte.dataset.zustand = "offen";
     }
 
     function laden() {
       var geheim = location.hash.slice(1);
-      if (!geheim && gemerkt()) {
+      if (!geheim && lesen(SPEICHER)) {
         // Ohne # gestartet (etwa vom Home-Bildschirm): zuletzt geöffnete Karte, Link wieder vollständig.
-        geheim = gemerkt();
+        geheim = lesen(SPEICHER);
         history.replaceState(null, "", "#" + geheim);
       }
       if (!/^[A-Za-z0-9_-]{16,}$/.test(geheim)) {
-        sperren("Diese Karte öffnet sich über ihren QR-Code.");
+        sperren("hinweis_ohne");
         return;
       }
       if (!window.crypto || !crypto.subtle || !window.TextEncoder) {
-        sperren("Dieser Browser kann die Karte nicht öffnen. Bitte mit einem aktuellen Browser erneut scannen.");
+        sperren("hinweis_browser");
         return;
       }
       karte.dataset.zustand = "laedt";
@@ -544,17 +667,18 @@
         });
       }).then(function (klartext) {
         zeigen(JSON.parse(new TextDecoder().decode(klartext)));
-        merken(geheim);
+        schreiben(SPEICHER, geheim);
       }).catch(function (fehler) {
         if (fehler instanceof TypeError || (fehler && fehler.message === "netz")) {
-          sperren("Die Karte ließ sich gerade nicht laden. Bitte später erneut versuchen.");
+          sperren("hinweis_netz");
         } else {
-          if (gemerkt() === geheim) vergessen();
-          sperren("Dieser Link ist unvollständig oder die Karte gibt es nicht mehr. Bitte den QR-Code erneut scannen.");
+          if (lesen(SPEICHER) === geheim) loeschen(SPEICHER);
+          sperren("hinweis_unbekannt");
         }
       });
     }
 
+    anwenden();
     window.addEventListener("hashchange", laden);
     laden();
 
@@ -575,29 +699,25 @@
       if (ereignis.target === blatt) blatt.close();
     });
 
-    if (!navigator.share) {
-      document.querySelector("[data-teilen-text]").textContent = "Link kopieren";
-    }
-
     // Geteilt wird der vollständige Link samt Schlüssel; ohne ihn öffnet sich die Karte nicht.
     teilen.addEventListener("click", function () {
       var url = location.href;
       if (navigator.share) {
         navigator.share({ title: document.title, url: url }).catch(function (fehler) {
           if (fehler && fehler.name !== "AbortError") {
-            meldung.textContent = "Teilen hat nicht geklappt. Link: " + url;
+            meldung.textContent = t("nicht_geteilt") + url;
           }
         });
         return;
       }
       if (navigator.clipboard && navigator.clipboard.writeText) {
         navigator.clipboard.writeText(url).then(function () {
-          meldung.textContent = "Link kopiert.";
+          meldung.textContent = t("kopiert");
         }, function () {
-          meldung.textContent = "Kopieren nicht möglich. Link: " + url;
+          meldung.textContent = t("nicht_kopiert") + url;
         });
       } else {
-        meldung.textContent = "Link: " + url;
+        meldung.textContent = t("link") + url;
       }
     });
   })();
