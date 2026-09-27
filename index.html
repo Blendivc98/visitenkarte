@@ -9,6 +9,8 @@
 <meta name="robots" content="noindex, nofollow">
 <meta name="referrer" content="no-referrer">
 <meta name="theme-color" content="#d41217">
+<!-- Name unter dem Symbol auf dem iPhone-Home-Bildschirm; die Seite setzt ihn nach dem Öffnen auf die Person. -->
+<meta name="apple-mobile-web-app-title" content="Visitenkarte">
 <meta name="color-scheme" content="light">
 <meta property="og:type" content="website">
 <meta property="og:title" content="Digitale Visitenkarte · HERZKönig Medizintechnik GmbH">
@@ -473,6 +475,19 @@
       karte.dataset.zustand = "gesperrt";
     }
 
+    // Merkt sich die zuletzt geöffnete Karte, falls ein Home-Bildschirm-Symbol ohne # startet.
+    // Speicher kann fehlen (privates Surfen); dann geht es ohne Merken weiter.
+    var SPEICHER = "hk-visitenkarte";
+    function gemerkt() {
+      try { return localStorage.getItem(SPEICHER) || ""; } catch (fehler) { return ""; }
+    }
+    function merken(geheim) {
+      try { localStorage.setItem(SPEICHER, geheim); } catch (fehler) { /* ohne Speicher weiter */ }
+    }
+    function vergessen() {
+      try { localStorage.removeItem(SPEICHER); } catch (fehler) { /* ohne Speicher weiter */ }
+    }
+
     function sha256(text) {
       return crypto.subtle.digest("SHA-256", new TextEncoder().encode(text));
     }
@@ -485,6 +500,7 @@
 
     function zeigen(daten) {
       document.title = daten.seitentitel;
+      document.querySelector('meta[name="apple-mobile-web-app-title"]').setAttribute("content", daten.name);
       // Die HTML-Teile stammen aus bauen.py (dort escaped) und sind durch AES-GCM gegen Änderung geschützt.
       document.querySelector("[data-portraet]").innerHTML = daten.portraet;
       document.querySelector("[data-name]").textContent = daten.name;
@@ -501,6 +517,11 @@
 
     function laden() {
       var geheim = location.hash.slice(1);
+      if (!geheim && gemerkt()) {
+        // Ohne # gestartet (etwa vom Home-Bildschirm): zuletzt geöffnete Karte, Link wieder vollständig.
+        geheim = gemerkt();
+        history.replaceState(null, "", "#" + geheim);
+      }
       if (!/^[A-Za-z0-9_-]{16,}$/.test(geheim)) {
         sperren("Diese Karte öffnet sich über ihren QR-Code.");
         return;
@@ -523,10 +544,12 @@
         });
       }).then(function (klartext) {
         zeigen(JSON.parse(new TextDecoder().decode(klartext)));
+        merken(geheim);
       }).catch(function (fehler) {
         if (fehler instanceof TypeError || (fehler && fehler.message === "netz")) {
           sperren("Die Karte ließ sich gerade nicht laden. Bitte später erneut versuchen.");
         } else {
+          if (gemerkt() === geheim) vergessen();
           sperren("Dieser Link ist unvollständig oder die Karte gibt es nicht mehr. Bitte den QR-Code erneut scannen.");
         }
       });
